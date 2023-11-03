@@ -24,7 +24,8 @@ class AuthService{
     required String name,
     required String department,
     required File image,
-    required String role,
+    required String role, 
+    required String fcmtoken,
   }
   )async{
     try {
@@ -34,6 +35,7 @@ class AuthService{
       faculty user = faculty(
         id: '',
         name: name,
+        fcmtoken: fcmtoken,
         dp:response.url,
         password: password,
         role: role,
@@ -120,7 +122,7 @@ class AuthService{
       }
 
       var tokenRes = await http.post(
-        Uri.parse('$uri/tokenIsValid'),
+        Uri.parse('$uri/kcg/faculty/tokenIsValid'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'x-auth-token': token
@@ -131,7 +133,7 @@ class AuthService{
 
       if (response == true) {
         http.Response userRes = await http.get(
-          Uri.parse('$uri/'),
+          Uri.parse('$uri/FacultyData/'),
           headers: <String, String>{
             'Content-Type': 'application/json; charset=UTF-8',
             'x-auth-token': token

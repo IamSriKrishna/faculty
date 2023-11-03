@@ -1,11 +1,11 @@
-// ignore_for_file: prefer_const_constructors
+// ignore_for_file: prefer_const_constructors, prefer_final_fields
 
 import 'dart:io';
+import 'package:faculty/CleanWidget/CustomSpinKit.dart';
 import 'package:faculty/CleanWidget/Signup/TopWidget.dart';
 import 'package:faculty/Feature/Screen/Auth/Login.dart';
 import 'package:faculty/Feature/Service/AuthService.dart';
 import 'package:faculty/Util/FontStyle/RobotoBoldFont.dart';
-import 'package:faculty/Util/showsnackbar.dart';
 import 'package:faculty/Util/util.dart';
 import 'package:faculty/Widget/AuthBottomNavigatorWidget/AuthBottomNavigatorWidget.dart';
 import 'package:faculty/Widget/CupertinoWidgets/CustomCupertinoModalpop.dart';
@@ -14,6 +14,7 @@ import 'package:faculty/Widget/TextField/CustomTextFieldPassword.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SignUp extends StatefulWidget {
   static const route = '/SignUp';
@@ -25,12 +26,14 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   
+  String? fcmToken = '';
   String selectedDepartment = 'Select Department';
   String role = 'Role';
   TextEditingController name = TextEditingController();
   TextEditingController rollNo = TextEditingController();
   TextEditingController password = TextEditingController();
   AuthService _authService = AuthService();
+  bool _signup = false;
   File? _image;
   Future<void> _pickImage() async {
     final imagePicker = ImagePicker();
@@ -40,6 +43,16 @@ class _SignUpState extends State<SignUp> {
         _image = File(pickedFile.path);
       });
     } 
+  }
+    @override
+  void initState(){
+    _initializePreferences();
+    super.initState();
+  }
+  void _initializePreferences() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    fcmToken = pref.getString('fcmToken');
+    print(fcmToken);
   }
   void signup(){
     if(selectedDepartment.isEmpty||name.text.isEmpty||rollNo.text.isEmpty||password.text.isEmpty||_image == null){
@@ -65,6 +78,7 @@ class _SignUpState extends State<SignUp> {
     }
     else{
       _authService.signUp(
+      fcmtoken: fcmToken!,
       department:selectedDepartment,
       context: context, 
       image: _image!,
@@ -73,10 +87,6 @@ class _SignUpState extends State<SignUp> {
       password: password.text, 
       name: name.text
     );
-    Navigator.pushNamed(context, Login.route).then((value) => showSnackBar(
-      context:context,
-      text:'Account created! Login with the same credentials!',
-    ));
     }
     
   }
@@ -132,7 +142,7 @@ class _SignUpState extends State<SignUp> {
                       controller: rollNo, 
                       hintText: 'Email', 
                       labelText: 'Email',
-                      textCapitalization: TextCapitalization.characters,
+                      //textCapitalization: TextCapitalization.characters,
                     ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -262,6 +272,8 @@ class _SignUpState extends State<SignUp> {
               ),
             ),
           ),
+          _signup == true?
+          CustomSpinkit():Container()
         ],
       ),
       

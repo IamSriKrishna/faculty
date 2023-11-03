@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class FacultyProvider extends ChangeNotifier {
   faculty _user = faculty(
       id: '',
+      fcmtoken: '',
       name: '',
       email: '',
       password: '',
@@ -32,6 +33,7 @@ class FacultyProvider extends ChangeNotifier {
     _user = faculty(
       id: '',
       name: '',
+      fcmtoken: '',
       email: '',
       password: '',
       role: '',

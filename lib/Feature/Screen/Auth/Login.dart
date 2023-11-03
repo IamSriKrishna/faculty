@@ -64,10 +64,10 @@ class _LoginState extends State<Login> {
                     height: MediaQuery.of(context).size.height * 0.05,
                   ),
                   CustomTextField(
-                    hintText: 'Register Number',
-                    labelText: 'Register Number',
+                    hintText: 'Email',
+                    labelText: 'Email',
                     controller: _rollNumber,
-                    textCapitalization: TextCapitalization.characters,
+                    //textCapitalization: TextCapitalization.characters,
                   ),
                   CustomTextFieldPassword(password: _password,),
                   SizedBox(
@@ -99,12 +99,12 @@ class _LoginState extends State<Login> {
         ],
       ),
       bottomNavigationBar:AuthBottomNavigatorWidget(
-                  prefixText: 'Ready to Begin Your Journey?', 
-                  sufixText: 'Sign Up', 
-                  onTap: (){
-            Navigator.pushNamed(context, SignUp.route);
-                  }
-                ) ,
+        prefixText: 'Ready to Begin Your Journey?', 
+        sufixText: 'Sign Up', 
+        onTap: (){
+          Navigator.pushNamed(context, SignUp.route);
+        }
+      ),
     );
   }
 }

@@ -10,6 +10,7 @@ class faculty {
   final String dp;
   final String classTeacher;
   final String role;
+  final String fcmtoken;
   faculty({
     required this.id,
     required this.name,
@@ -19,6 +20,7 @@ class faculty {
     required this.token,
     required this.dp,
     required this.role,
+    required this.fcmtoken,
     required this.classTeacher
   });
 
@@ -27,6 +29,7 @@ class faculty {
       'id': id,
       'name': name,
       'email': email,
+      'fcmtoken':fcmtoken,
       'password': password,
       "department":department,
       'dp':dp,
@@ -44,6 +47,7 @@ class faculty {
       password: map['password'] ?? '',
       dp:map["dp"]??'',
       role:map['role']??'',
+      fcmtoken: map['fcmtoken']??'',
       classTeacher:map['classTeacher']??'',
       department:map['department']?? '',
       token: map['token'] ?? '',
@@ -61,6 +65,7 @@ class faculty {
     String? password,
     String? department,
     String? dp,
+    String? fcmtoken,
     String? classTeacher,
     String? role,
     int? credit,
@@ -70,6 +75,7 @@ class faculty {
       id: id ?? this.id,
       name: name ?? this.name,
       dp:dp?? this.dp,
+      fcmtoken:fcmtoken??this.fcmtoken,
       role:role??this.role,
       classTeacher:classTeacher??this.classTeacher,
       department: department??this.department,

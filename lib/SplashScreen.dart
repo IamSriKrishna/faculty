@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:faculty/Feature/Screen/OverScreen/OverScreen.dart';
 import 'package:faculty/Util/FontStyle/RobotoRegularFont.dart';
+import 'package:faculty/Widget/Additional/CustomHiddenbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
 
     Future.delayed(Duration(milliseconds: 2950),(){
-      Navigator.pushReplacementNamed(context, OverScreen.route);
+      Navigator.pushReplacementNamed(context, HiddenDrawer.route);
     });
   }
   @override

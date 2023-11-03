@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 
-import 'package:faculty/Feature/Screen/OverScreen/OverScreen.dart';
+import 'package:faculty/Feature/Screen/OverScreen/Home/Widget/MainScreen.dart';
 import 'package:faculty/Util/Additional/error_handling.dart';
 import 'package:faculty/Util/LocalNotification.dart';
 import 'package:faculty/Util/showsnackbar.dart';
@@ -10,10 +10,6 @@ import 'package:faculty/Util/util.dart';
 import 'package:faculty/model/Form.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
-// Define a unique key for storing the upload count for each user.
-final String uploadCountKey = 'uploadCount';
-final String lastUploadDateKey = 'lastUploadDate';
 class FormService{
 
   //Upload Form
@@ -26,50 +22,35 @@ class FormService{
     required String image,
     required String year,
     required String formtype,
-    required String Studentclass,
+    required String studentclass,
     required String reason,
     required int no_of_days,
     required String from,
     required String to,
     required DateTime createdAt,
     required String id,
-    required int spent
+    required int spent,
+    required String fcmtoken
   }
   )async{
     try {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    final lastUploadDate = prefs.getString(lastUploadDateKey);
-    final now = DateTime.now();
-    final today = DateTime(now.year, now.month, now.day);
-
-    // If it's a new day, reset the upload count and update the last upload date.
-    if (lastUploadDate == null || DateTime.parse(lastUploadDate).isBefore(today)) {
-      prefs.setInt(uploadCountKey, 0);
-      prefs.setString(lastUploadDateKey, today.toIso8601String());
-    }
-
-    // Check if the user has exceeded the upload limit.
-    int uploadCount = prefs.getInt(uploadCountKey) ?? 0;
-    if (uploadCount >= 2) {
-      showSnackBar(context: context, text: 'You have reached the daily upload limit.');
-      return;
-    }
       FormModel user = FormModel(
         spent:spent,
-        id: id,
-        name: name, 
+        id: '',
+        name: name,
+        studentid: id, 
         rollno: rollno, 
         department: department, 
         dp: image, 
         no_of_days:no_of_days,
         from: from,
+        fcmtoken: fcmtoken,
         to: to,
         response: '',
         createdAt: createdAt,
         year: year, 
         formtype: formtype, 
-        Studentclass: Studentclass, 
+        studentclass: studentclass, 
         reason: reason
       );
       
@@ -88,7 +69,7 @@ class FormService{
           LocalNotifications.showSimpleNotification(
                     title: 'Campus~Link',
                     body: "Form Request Successfully Sent\nCheck History",
-                  ).then((value) => Navigator.pushNamedAndRemoveUntil(context, OverScreen.route, (route) => false).then((value) => showSnackBar(
+                  ).then((value) => Navigator.pushNamedAndRemoveUntil(context, MainScreen.route, (route) => false).then((value) => showSnackBar(
             context:context,
             text:'Account created! Login with the same credentials!',
           )));
@@ -102,5 +83,67 @@ class FormService{
   }
 
 
+    //Display AllForm
+  Future<List<FormModel>> DisplayAllForm(
+  {
+    required BuildContext context,
+  }
+  )async{
+    List<FormModel> form = [];
+    try {
+      
+      http.Response res = await http.get(
+        Uri.parse('$uri/kcg/student/form'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+      print("response=${res.body}");
+      httpErrorHandle(
+        response: res,
+        context: context,
+        onSuccess: () {
+          for (int i = 0; i < jsonDecode(res.body).length; i++) {
+            form.add(
+              FormModel.fromJson(
+                jsonEncode(
+                  jsonDecode(res.body)[i],
+                ),
+              ),
+            );
+          }
+        },
+      );
+    } catch (e) {
+      showSnackBar( context:context,text: e.toString());
+    }
+    return form;
+  }
 
+  Future<void> formResponse({
+    //required BuildContext context,
+    required String formid,
+    required String response,
+  })async{
+    try{
+      final Map<String, dynamic> data = {'response': response};
+      http.Response res = await http.put(
+        Uri.parse('$uri/kcg/student/form/$formid/update-form'),
+        headers: <String,String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(data),
+      );
+      if (res.statusCode == 200) {
+        print('Credit updated successfully');
+        // You can handle success here
+      } else {
+        print('Failed to update credit');
+        print(res.body);
+        // Handle error here
+      }
+    }catch(e){
+      print(e);
+    }
+  }
 }
