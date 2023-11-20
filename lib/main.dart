@@ -70,10 +70,21 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-final AuthService authService = AuthService();
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final AuthService authService = AuthService();
   @override
   void initState() {
     super.initState();
+    _firebaseMessaging.setForegroundNotificationPresentationOptions(
+      badge: true,
+      sound: true
+    );
+    _firebaseMessaging.requestPermission(
+      announcement: true,
+      carPlay: true,
+      criticalAlert: true,
+      provisional: true
+    );
     authService.getUserData(context);
   }
   @override
