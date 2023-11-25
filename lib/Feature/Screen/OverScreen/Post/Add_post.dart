@@ -5,10 +5,12 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:faculty/CleanWidget/CustomSpinKit.dart';
 import 'package:faculty/Feature/Service/AddPostService.dart';
+import 'package:faculty/Feature/Service/notification.dart';
 import 'package:faculty/Util/util.dart';
 import 'package:faculty/Widget/Additional/custom_button.dart';
 import 'package:faculty/Widget/Additional/custom_textfield.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AddPostScreen extends StatefulWidget {
   static const String routeName = '/AddPostScreen';
@@ -28,6 +30,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   List<File> images = [];
   final _addProductFormKey = GlobalKey<FormState>();
   bool _link = false;
+  bool _notify = false;
   @override
   void dispose() {
     super.dispose();
@@ -153,6 +156,25 @@ class _AddPostScreenState extends State<AddPostScreen> {
                         Text('Link')
                       ],
                     ),
+                    Row(
+                      children: [
+                        Text(
+                          'Notify All Students',
+                          style: GoogleFonts.merriweather(
+                            fontSize:18
+                          ),
+                        ),
+                        Checkbox(
+                          activeColor: Colors.black,
+                          value: _notify, 
+                          onChanged:(value) {
+                            setState(() {
+                              _notify = !_notify;
+                            });
+                          },
+                        )                        
+                      ],
+                    ),
                     _link?CustomTextField(
                       controller: linkController,
                       hintText: 'Link',
@@ -160,11 +182,22 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     const SizedBox(height: 20),
                     CustomButton(
                       text: 'Upload',
-                      onTap:() => sellProduct(
-                        description: descriptionController.text, 
-                        title: titleController.text, 
-                        link: _link==false?'null':linkController.text
-                      ),
+                      onTap:() {
+                        if(_notify==true){
+                          //FCMNotification().sendNotification();
+                          sellProduct(
+                            description: descriptionController.text, 
+                            title: titleController.text, 
+                            link: _link==false?'null':linkController.text
+                          );
+                        }else{
+                          sellProduct(
+                            description: descriptionController.text, 
+                            title: titleController.text, 
+                            link: _link==false?'null':linkController.text
+                          );
+                        }
+                      } 
                     ),
                   ],
                 ),
